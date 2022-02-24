@@ -2,6 +2,14 @@
 
 The code provisions required infrastructure for Anthos Connect Gateway demo.
 
+The infrastructure consists of N private GKE clusters that are registered fleet members.
+The fleet uses Config Sync with a GIT repository provided by Source Code Repositories.
+
+Optionally, a bastion host with a public IP address can be provisioned in the same VPC network for
+troubleshooting purposes.
+
+![connect-gateway-demo](../connect-gateway-demo.jpg)
+
 ## Example configuration
 
 ```hcl

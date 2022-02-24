@@ -42,7 +42,7 @@ Application default credentials are used to authenticate calls to GCP APIs.
 
 ```sh
 pip install -r requirements.txt
-python gke-connect-agent-generator.py -p my-fleet-project-id -d ./acm-repo/configsync/connect-agent
+python gke-connect-agent-generator.py -p my-fleet-project-id -d acm-repo
 ```
 
 ## Details
@@ -50,4 +50,4 @@ python gke-connect-agent-generator.py -p my-fleet-project-id -d ./acm-repo/confi
 The script uses GKE HUB APIs to list memberships in a fleet and generate Connect Agent manifests:
 
 * `projects.locations.memberships.list`
-* `projects.locations.memberships.generateConnectManifes`
+* `projects.locations.memberships.generateConnectManifest`

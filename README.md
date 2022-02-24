@@ -26,48 +26,57 @@ for clusters in a fleet. The Agent is required for Connect Gateway operation.
    * create `terraform.tfvars` file (check [terraform README](./terraform/README.md) for more details)
    * run `terrafrom apply`
 
-2. Clone Anthos Config Management repository
-
-   *NOTE: adjust repository name and project identifiers in the below example*
+2. Set you GKE fleet project identifier in gcloud and as env variable
 
    ```sh
-   gcloud source repos clone acm-fleet-my-project-id --project=my-project-id
+   gcloud config set project my-project-id
+   export FLEET_PROJECT_ID=my-project-id
    ```
 
-3. Use `gke-connect-agent-generator` to generate manifest files for Connect Agent
-
-   *NOTE: check [gke-connect-agent-generator](./gke-connect-agent-generator/README.md)
-   README for more usage details*
+3. Clone Anthos Config Management repository
 
    ```sh
-   python gke-connect-agent-generator.py -p my-project-id -d acm-fleet-my-project-id/connect-agent
+   gcloud source repos clone gke-config-management
    ```
 
-4. Use `gke-connect-gateway-generator` to generate manifest files for Connect Gateway 
-
-   *NOTE: check [gke-connect-gateway-generator](./gke-connect-gateway-generator/README.md)
-   README for more usage details*
+4. Use `gke-connect-agent-generator` script to generate manifest files for Connect Agent
 
    ```sh
-   python gke-connect-gateway-generator.py -u userOne@mydomian.com -u userTwo@mydomain.com -d acm-fleet-my-project-id/connect-gateway
+   python gke-connect-agent-generator/gke-connect-agent-generator.py -p $FLEET_PROJECT_ID -d gke-config-management
    ```
 
-5. Commit files
+5. Use `gke-connect-gateway-generator` script to generate manifest files for Connect Gateway authentication
+
+   *NOTE:* adjust Google Account identifiers of your users in a below example
 
    ```sh
-   cd acm-fleet-my-project-id
+   python gke-connect-gateway-generator/gke-connect-gateway-generator.py -u john@mydomian.com -u jane@mydomain.com -d gke-config-management
+   ```
+
+6. Commit generated files to the config management repository
+
+   ```sh
+   cd gke-config-management
    git add .
    git commit -m "connect-gateway-demo"
    git push -u origin main
    ```
 
-6. Wait for GKE clusters to synchronize configuration
+7. Wait for GKE clusters to synchronize configuration
 
-7. Get cluster credentials from GKE Hub and **enjoy!**
+8. Get cluster credentials from GKE Hub and **enjoy!**
 
    ```sh
-   gcloud container hub memberships get-credentials my-cluster-one-membership-name --project=my-fleet-host-project-id
-   gcloud container hub memberships get-credentials my-cluster-two-membership-name --project=my-fleet-host-project-id
+   gcloud container hub memberships get-credentials cluster-one
+   gcloud container hub memberships get-credentials cluster-two
    ```
 
 ## Design
+
+The infrastructure consists of N private GKE clusters that are registered fleet members.
+The fleet uses Config Sync with a GIT repository provided by Source Code Repositories.
+
+Optionally, a bastion host with a public IP address can be provisioned in the same VPC network for
+troubleshooting purposes.
+
+![connect-gateway-demo](./connect-gateway-demo.jpg)

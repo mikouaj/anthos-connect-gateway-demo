@@ -5,8 +5,8 @@ resource "google_service_account" "acm" {
 }
 
 resource "google_sourcerepo_repository" "acm" {
-  project    = var.fleet_host_project_id
-  name       = "acm-fleet-${var.fleet_host_project_id}"
+  project = var.fleet_host_project_id
+  name    = "gke-config-management"
 }
 
 resource "google_sourcerepo_repository_iam_member" "acm-reader" {

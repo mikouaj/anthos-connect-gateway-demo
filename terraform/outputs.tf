@@ -1,5 +1,5 @@
 output "clusters" {
-  value = [ for cluster in google_container_cluster.gke : cluster.id]
+  value = [for cluster in google_container_cluster.gke : cluster.id]
 }
 
 output "acm_repo_url" {

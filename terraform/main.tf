@@ -35,8 +35,8 @@ resource "google_project_service" "service" {
 module "gke-fleet" {
   source                = "./gke-fleet"
   fleet_host_project_id = var.project_id
-  gke_clusters = [for cluster in local.clusters : "projects/${var.project_id}/locations/${cluster.region}/clusters/${cluster.name}"]
-  depends_on   = [google_container_cluster.gke]
+  gke_clusters          = [for cluster in local.clusters : "projects/${var.project_id}/locations/${cluster.region}/clusters/${cluster.name}"]
+  depends_on            = [google_container_cluster.gke]
 }
 
 resource "google_service_account_iam_binding" "admin-account-iam" {

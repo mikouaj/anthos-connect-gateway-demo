@@ -1,21 +1,23 @@
 locals {
-  clusters = [for cluster in var.gke_clusters: {
-    project = split("/", cluster)[1]
+  clusters = [for cluster in var.gke_clusters : {
+    project  = split("/", cluster)[1]
     location = split("/", cluster)[3]
-    name = split("/", cluster)[5]
+    name     = split("/", cluster)[5]
   }]
 }
 
+/*
 resource "google_gke_hub_feature" "acm" {
   provider   = google-beta
   project    = var.fleet_host_project_id
   name       = "configmanagement"
   location   = "global"
 }
+*/
 
 resource "google_gke_hub_membership" "gke-hub-members" {
-  provider      = google-beta
-  project       = var.fleet_host_project_id
+  provider = google-beta
+  project  = var.fleet_host_project_id
   for_each = {
     for cluster in local.clusters : cluster.name => cluster
   }
@@ -31,8 +33,8 @@ resource "google_gke_hub_membership" "gke-hub-members" {
 }
 
 resource "google_gke_hub_feature_membership" "feature_member" {
-  provider   = google-beta
-  project    = var.fleet_host_project_id
+  provider = google-beta
+  project  = var.fleet_host_project_id
   for_each = {
     for cluster in local.clusters : cluster.name => cluster
   }
@@ -47,6 +49,7 @@ resource "google_gke_hub_feature_membership" "feature_member" {
         sync_repo                 = google_sourcerepo_repository.acm.url
         secret_type               = "gcpserviceaccount"
         gcp_service_account_email = google_service_account.acm.email
+        sync_branch               = "main"
       }
     }
   }
